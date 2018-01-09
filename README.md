@@ -1,6 +1,6 @@
 # lang2trans
 
-> A Vue.js project
+> 在线翻译小工具
 
 ## Build Setup
 
