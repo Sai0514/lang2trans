@@ -12,20 +12,40 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 app.post('/translate', function(req, res) {
+    res.header('Access-Control-Allow-Origin', '*');
     if (req && req.body) {
         let data = req.body;
-        let langTo = data.to
-        let valueDst;
+        let langFrom = data.from ? data.from : 'auto';
+        console.log(data)
         try {
-            tjs.translate(data).then(result => {
-                valueDst = result && result.result
-                res.send(valueDst)
+            tjs.translate({
+                text: data.text,
+                to: data.to,
+                api: data.api || 'google'
+            }).then(result => {
+                console.log(result)
+                let valueDst = result && result.result
+                res.json(valueDst);
             }).catch(error => {
                 console.log(error)
             })
         } catch (error) {
             console.log(error)
         }
+    }
+});
+
+//allow custom header and CORS
+app.all('*', function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+
+    if (req.method == 'OPTIONS') {
+        res.send(200);
+        /*让options请求快速返回*/
+    } else {
+        next();
     }
 });
 

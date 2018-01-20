@@ -3,6 +3,9 @@
 */
 import axios from 'axios';
 
+//配置接口地址
+axios.defaults.baseURL = 'http://localhost:3000';
+
 function get(url, params, callback) {
     axios.get(url, params)
         .then((res) => {

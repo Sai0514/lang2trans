@@ -1,13 +1,13 @@
 <template>  
   <div class="wrapper-navbar">
     <div class="translate-language">
-      <Select v-model="langF" class="language From" @on-change="chooseLangF">
+      <Select v-model="langF" class="language From" @on-change="chooseLangFrom">
           <Option v-for="item in langList" :value="item.value" :key="item.value">
             {{item.label}}
           </Option>
       </Select>
       <Icon type="ios-arrow-thin-right" size="30" class="arrow"></Icon>
-      <Select v-model="langT" class="language To" @on-change="chooseLangT">
+      <Select v-model="langT" class="language To" @on-change="chooseLangTo">
           <Option v-for="item in langList.slice(1)" :value="item.value" :key="item.value">
               {{ item.label }}
           </Option>
@@ -31,24 +31,28 @@ export default{
   },
   computed:{
         ...mapState([
-            'langFrom', 'hasChecked'
+            'langFrom', 'langTo' ,'hasChecked'
         ]),
 	},
   methods: {
     ...mapMutations([
-		'GET_GOALLANG'
+        'SET_ORIGNLANG',
+		'SET_GOALLANG'
     ]),
     ...mapActions([
+        'getDetectLang',
         'getTranslation'
     ]),
-    chooseLangF(value) {
-        //console.log(langFrom)
+    chooseLangFrom(value) {
         if (value!= 'auto') {
             this.langF = value;
         } 
+        this.SET_ORIGNLANG(value)
+        // console.log(this.$store.state.langFrom)
     },
-    chooseLangT(value) {
-        this.langT = this.GET_GOALLANG(value);
+    chooseLangTo(value) {
+        this.langT = value;
+        this.SET_GOALLANG(value);
         console.log(this.$store.state.langTo)
     },
     translate(){

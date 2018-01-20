@@ -1,4 +1,7 @@
-//处理数据
+/*
+    处理数据
+*/
+
 import { GET_DETECTLANG, GET_TRANSLATION } from './mutation-types.js'
 import { langFromDect, translate } from '../common/getData'
 
@@ -7,15 +10,16 @@ export default {
     async getDetectLang({
         commit,
         state
-    }, func) {
+    }) {
+        let text = window.localStorage.getItem('text')
+        let langfrom = window.localStorage.getItem('langfrom')
         let query = {
-            text: state.query,
-            langFrom: state.langFrom,
-            langTo: state.langTo
-        };
-        let reslang = await langFromDect(query)
-        func();
-        console.log(reslang)
+            text,
+            langfrom
+        }
+        let res = await langFromDect(query)
+        let reslang = res && res.from ? res.from : 'auto'
+        console.log(res)
         commit(GET_DETECTLANG, reslang)
     },
     // 获取翻译结果
@@ -23,10 +27,7 @@ export default {
         commit,
         state
     }) {
-        let data = {
-            query: state.query,
-            to: state.langTo
-        }
+        let data = window.localStorage.getItem('query')
         let transres = await translate(data)
         commit(GET_TRANSLATION, transres)
     }

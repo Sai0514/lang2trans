@@ -1,9 +1,16 @@
 <template>
   <div class="wrapper-content">
-    <Input v-model="valueSrc" type="textarea" :autosize="{minRows: 6}" 
-      class="input-content" @on-keyup="detectSrc"></Input>
-    <Input v-model="valueDst" type="textarea" :autosize="{minRows: 6}" 
-      class="trans-content"></Input>
+    <div class="left">
+        <Icon type="close" size="12px" class="closed"></Icon>
+        <Input v-model="valueSrc" type="textarea" :autosize="{minRows: 10}" 
+        class="input-content" @on-keyup="detectSrc"></Input>
+        <span class="left-words">{{leftwords}}/{{areaHighWordNum}}</span>
+    </div>
+    <div class="right">
+        <Input v-model="valueDst" type="textarea" :autosize="{minRows: 10}" 
+        class="trans-content" ref="highlight" readonly></Input>
+        <span class="right-words">{{rightwords}}/{{areaHighWordNum}}</span>
+    </div>
   </div>
 </template>
 
@@ -16,6 +23,9 @@ export default{
       valueSrc: '',
       valueDst: '',
       valueArr: '',
+      leftwords: 0,
+      rightwords: 0,
+      areaHighWordNum: 20000
     }
   },
   computed:{
@@ -25,29 +35,23 @@ export default{
 	},
   methods:{
     ...mapMutations([
-		  'GET_TRANSLATION' ,'SAVE_QUERYTEXT', 'ISCHECKED'
+		  'GET_DETECTLANG', 'GET_TRANSLATION' ,'SAVE_QUERYTEXT', 'SAVE_ISCHECKED'
     ]),
     ...mapActions([
-      'getDetectLang'
+      'getDetectLang',
+      'getTranslation'
     ]),
     detectSrc(e){
-      let text = e.target.value;
-      let from = this.$store.state.langFrom 
-      debugger
+      let text = e.target.value
+      this.SAVE_QUERYTEXT(text)
+      let from = this.$store.state.langFrom
       if (!from || from == 'auto') {
-          this.SAVE_QUERYTEXT(text);
-          try {
-              this.getDetectLang(()=>{
-               
-                this.ISCHECKED(true);
-                console.log(this.$store.state.hasChecked)
-                console.log('jjjjjjjjjj')
-              });
-          } catch (error) {
-              console.log(error)
-          }
-        
+        window.localStorage.setItem('langfrom', from)
+        window.localStorage.setItem('text', text)
       }
+      setTimeout(()=>{
+        this.getDetectLang();
+      }, 500)
     }
   }
 }
@@ -59,13 +63,25 @@ export default{
     flex-direction: row;
     justify-content: center;
     align-items: stretch;
-    width: 960px;
-    margin: auto;
+    width: 82vw;
+    margin: 0 auto;
+}
+
+.wrapper-content div{
+    width: 41vw;
+    display: flex;
+    flex-direction: column;
+}
+.wrapper-content span{
+    color: #808080;
+    text-align: right;
+    margin-right: 5px;
 }
 
 .wrapper-content textarea {
     border-radius: 0;
     resize: none;
+    padding: 10px;
 }
 
 .trans-content .ivu-input{
@@ -73,7 +89,19 @@ export default{
 }
 
 .trans-content .highlight{
-    background: yellowgreen;
+    background: red
+}
+
+.left {
+    position: relative;
+}
+.left .closed {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+    color: rgba(128,128,128, 0.3);
+    cursor: pointer;
 }
 </style>
 
