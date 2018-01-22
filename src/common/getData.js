@@ -31,10 +31,12 @@ export const langFromDect = (query) => {
 };
 
 export const translate = (data) => {
-    post('/translate', data, (res) => {
-        if (res && res.data) {
-            console.log(res)
-                // let result = res && res.data
-        }
+    return new Promise(function(resolve, reject) {
+        post('/translate', data, (res) => {
+            if (res && res.data) {
+                // console.log(res)
+                return resolve(res)
+            }
+        })
     })
 }

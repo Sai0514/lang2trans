@@ -4,6 +4,8 @@
 
 import { GET_DETECTLANG, GET_TRANSLATION } from './mutation-types.js'
 import { langFromDect, translate } from '../common/getData'
+import { mapping } from '../common/config.js'
+
 
 export default {
     // 获取检测语种
@@ -11,24 +13,28 @@ export default {
         commit,
         state
     }) {
-        let text = window.localStorage.getItem('text')
-        let langfrom = window.localStorage.getItem('langfrom')
         let query = {
-            text,
-            langfrom
+            text: state.query,
+            langfrom: state.langFrom
         }
         let res = await langFromDect(query)
+            // console.log(res)
         let reslang = res && res.from ? res.from : 'auto'
-        console.log(res)
-        commit(GET_DETECTLANG, reslang)
+        commit(GET_DETECTLANG, mapping.baidutog[reslang])
     },
     // 获取翻译结果
     async getTranslation({
         commit,
         state
-    }) {
-        let data = window.localStorage.getItem('query')
-        let transres = await translate(data)
-        commit(GET_TRANSLATION, transres)
+    }, func) {
+        let data = {
+            text: state.query,
+            to: state.langTo,
+            api: state.channel
+        }
+        let result = await translate(data)
+            // console.log(result)
+        commit(GET_TRANSLATION, result.data)
+        func()
     }
 }

@@ -12,6 +12,7 @@ const state = {
     langTo: 'zh-CN', //目标语种
     query: '', // 翻译源文本
     result: '', // 翻译结果
+    valueDst: '', // 结果格式化
     hasChecked: false
 }
 

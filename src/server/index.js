@@ -16,7 +16,7 @@ app.post('/translate', function(req, res) {
     if (req && req.body) {
         let data = req.body;
         let langFrom = data.from ? data.from : 'auto';
-        console.log(data)
+        // console.log(data)
         try {
             tjs.translate({
                 text: data.text,

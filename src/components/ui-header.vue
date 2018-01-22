@@ -39,6 +39,11 @@ export default{
 		]),
     changeChannel(value) {
       this.SET_CHANNEL(value);
+      if (value != 'google') {
+        this.$Notice.warning({
+          desc:'建议使用谷歌翻译！'
+        })
+      }
       // console.log(this.$store.state.channel)
     }
   }
@@ -47,14 +52,15 @@ export default{
 
 <style>
 .wrapper-header {
-    width: 960px;
+    width: 82vw;
     margin: 0 auto;
+    font-size: 62.5%;
 }
 
 .title {
     width: 100%;
     height: 48px;
-    font-size: 24px;
+    font-size: 1.8rem;
     line-height: 2;
     margin-bottom: 10px;
 }
@@ -65,16 +71,16 @@ export default{
     margin-bottom: 10px;
     justify-content: flex-end;
     align-items: flex-end;
-    height: 22px;
+    height: 24px;
 }
 
 .translate-channel .langs {
-    width: 100px;
+    width: 8rem;
     margin-right: 10px;
 }
 
 .translate-channel .huaci {
-    height: 22px;
-    line-height: 22px;
+    height: 24px;;
+    line-height: 24px;
 }
 </style>

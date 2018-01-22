@@ -12,32 +12,46 @@
               {{ item.label }}
           </Option>
       </Select>
-      <Button type="primary" class="translate" @click="translate">翻译</Button>
+      <Button type="primary" class="translate" @click="translate">翻 译</Button>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import { langs, mapping } from '../common/config.js'
 
 export default{
   data(){
     return{
-        langList: langs.langList || [],
-        langF: 'auto',
-        langT: 'zh-CN'
+        langList: langs.langList || []
     }
   },
   computed:{
-        ...mapState([
-            'langFrom', 'langTo' ,'hasChecked'
-        ]),
-	},
+    langF:{
+        get: function () {
+            return this.$store.state.langFrom
+        },
+        set: function (newValue) {
+            this.$store.state.langFrom = newValue
+        }
+    },
+    langT:{
+        get: function () {
+            return this.$store.state.langTo
+        },
+        set: function (newValue) {
+            this.$store.state.langTo = newValue
+        }
+    }
+  },
   methods: {
     ...mapMutations([
         'SET_ORIGNLANG',
-		'SET_GOALLANG'
+        'SET_GOALLANG',
+        'SET_HASCHECKED',
+        'GET_TRANSLATION',
+        'SAVE_TRANSLATION'
     ]),
     ...mapActions([
         'getDetectLang',
@@ -53,15 +67,29 @@ export default{
     chooseLangTo(value) {
         this.langT = value;
         this.SET_GOALLANG(value);
-        console.log(this.$store.state.langTo)
+        // console.log(this.$store.state.langTo)
     },
     translate(){
         let from = this.$store.state.langFrom
         let to = this.$store.state.langTo
         let query = this.$store.state.query
         if (from && to && query) {
-            this.getTranslation(this.$store.state)
+            this.getTranslation(()=>{
+                let trans = this.$store.state.result;
+                let translation = this.createText(trans);
+                this.SAVE_TRANSLATION(translation);
+                this.SET_HASCHECKED(true);
+                // console.log(this.$store.state.valueDst)
+            }); 
+        } else {
+            this.SAVE_TRANSLATION();
+            this.SET_HASCHECKED(false);
+            this.$Message.warning('请输入翻译文本！');
         }
+    },
+    createText(arr) {
+        let newArr = arr.map(item => item + '\r\n');
+        return newArr.join('').trim()
     }
   }
 }
@@ -69,8 +97,9 @@ export default{
 
 <style>
 .wrapper-navbar {
-    width: 960px;
+    width: 82vw;
     margin: 0 auto;
+    font-size: 62.5%;
 }
 
 .translate-language {
@@ -78,17 +107,17 @@ export default{
     flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
-    height: 48px;
     margin-bottom: 10px;
+    height: 48px;    
 }
 
 .translate-language .language {
-    width: 160px;
+    width: 11rem;
 }
 
 .translate-language .translate {
-    width: 100px;
-    margin-left: 10px;
+    width: 8rem;
+    margin-left: 20px;
 }
 
 .translate-language .arrow {
